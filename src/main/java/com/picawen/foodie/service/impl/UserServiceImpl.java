@@ -3,7 +3,7 @@ package com.picawen.foodie.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.picawen.foodie.mapper.UserMapper;
 import com.picawen.foodie.pojo.User;
-import com.picawen.foodie.pojo.vo.UserAddReqVo;
+import com.picawen.foodie.pojo.vo.req.UserAddReqVo;
 import com.picawen.foodie.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

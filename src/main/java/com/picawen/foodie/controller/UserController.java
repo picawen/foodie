@@ -1,18 +1,26 @@
 package com.picawen.foodie.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.picawen.foodie.common.R;
 import com.picawen.foodie.pojo.User;
-import com.picawen.foodie.pojo.vo.UserAddReqVo;
+import com.picawen.foodie.pojo.vo.req.UserAddReqVo;
+import com.picawen.foodie.pojo.vo.req.UserLoginReqVo;
+import com.picawen.foodie.pojo.vo.resp.UserLoginRespVo;
 import com.picawen.foodie.service.UserService;
+import com.picawen.foodie.util.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 /**
@@ -76,7 +84,24 @@ public class UserController {
         return new R<>(user);
     }
 
-    public R login(){
-        return null;
+    /**
+     * 用户登录
+     *
+     * @param vo
+     * @return
+     */
+    @PostMapping("/login")
+    public R login(@Validated @RequestBody UserLoginReqVo vo, HttpServletRequest request, HttpServletResponse response) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, vo.getUsername());
+        queryWrapper.eq(User::getPassword, SecureUtil.md5(vo.getPassword()));
+        User user = userService.getOne(queryWrapper);
+        if (user == null) {
+            return new R("用户名或密码错误");
+        }
+        UserLoginRespVo result = new UserLoginRespVo();
+        BeanUtil.copyProperties(user, result);
+        CookieUtils.setCookie(request, response, "user", JSONUtil.toJsonStr(result), true);
+        return new R<>(result);
     }
 }

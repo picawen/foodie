@@ -2,7 +2,7 @@ package com.picawen.foodie.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.picawen.foodie.pojo.User;
-import com.picawen.foodie.pojo.vo.UserAddReqVo;
+import com.picawen.foodie.pojo.vo.req.UserAddReqVo;
 
 /**
  * 用户

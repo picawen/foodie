@@ -1,4 +1,4 @@
-package com.picawen.foodie.pojo.vo;
+package com.picawen.foodie.pojo.vo.req;
 
 import lombok.Data;
 
