@@ -63,7 +63,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
-    public R register(@Validated @RequestBody UserAddReqVo vo) {
+    public R register(@Validated @RequestBody UserAddReqVo vo, HttpServletRequest request, HttpServletResponse response) {
         if (!vo.getPassword().equals(vo.getConfirmPassword())) {
             return new R("密码与确认密码不一致");
         }
@@ -81,7 +81,10 @@ public class UserController {
         user.setCreatedTime(LocalDateTime.now());
         user.setUpdatedTime(LocalDateTime.now());
         userService.save(user);
-        return new R<>(user);
+        UserLoginRespVo result = new UserLoginRespVo();
+        BeanUtil.copyProperties(user, result);
+        CookieUtils.setCookie(request, response, "user", JSONUtil.toJsonStr(result), true);
+        return new R<>(result);
     }
 
     /**
@@ -103,5 +106,19 @@ public class UserController {
         BeanUtil.copyProperties(user, result);
         CookieUtils.setCookie(request, response, "user", JSONUtil.toJsonStr(result), true);
         return new R<>(result);
+    }
+
+    /**
+     * 退出登录
+     *
+     * @param id
+     * @param request
+     * @param response
+     * @return
+     */
+    @PostMapping("/logout")
+    public R logout(@RequestParam Long id, HttpServletRequest request, HttpServletResponse response) {
+        CookieUtils.deleteCookie(request, response, "user");
+        return new R();
     }
 }
